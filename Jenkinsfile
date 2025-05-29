@@ -4,21 +4,34 @@ pipeline {
     stages {
         stage('Test') {
             steps {
-                sh 'pip install -r requirements.txt'
-                sh 'pytest'
+                sh 'python3 -m unittest discover tests'
+            }
+        }
+
+        stage('Build') {
+            steps {
+                sh 'zip -r app.zip . -x "*.git*" "*tests/*"'
+            }
+        }
+
+        stage('Archive Artifact') {
+            steps {
+                archiveArtifacts artifacts: 'app.zip'
             }
         }
     }
 
     post {
-        always {
-            mail to: 'deniz-can96@hotmail.com',
-                 subject: "Jenkins Build ${currentBuild.fullDisplayName}",
-                 body: "Build Status: ${currentBuild.currentResult}"
+        success {
+            echo 'Build Success'
+        }
+        failure {
+            mail to: 'entwickler@example.com',
+                 subject: "Build fehlgeschlagen: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+                 body: "Der Build ist fehlgeschlagen. Bitte prüfen."
         }
     }
 }
-
 
 
 
