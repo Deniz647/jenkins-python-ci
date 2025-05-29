@@ -4,19 +4,18 @@ pipeline {
     stages {
         stage('Test') {
             steps {
-                sh 'python3 -m unittest discover tests'
+                sh 'pip3 install -r requirements.txt'
+                sh 'pytest tests'
             }
         }
-
         stage('Build') {
             steps {
-                sh 'zip -r app.zip . -x "*.git*" "*tests/*"'
+                sh 'zip -r app.zip .'
             }
         }
-
         stage('Archive Artifact') {
             steps {
-                archiveArtifacts artifacts: 'app.zip'
+                archiveArtifacts artifacts: 'app.zip', fingerprint: true
             }
         }
     }
@@ -26,12 +25,10 @@ pipeline {
             echo 'Build Success'
         }
         failure {
-            mail to: 'entwickler@example.com',
-                 subject: "Build fehlgeschlagen: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
-                 body: "Der Build ist fehlgeschlagen. Bitte prüfen."
+            // mail to: 'deniz-can96@hotmail.com.com',
+            //      subject: "Build fehlgeschlagen: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+            //      body: "Der Build ist fehlgeschlagen. Bitte prüfen."
         }
     }
 }
-
-
 
