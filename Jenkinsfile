@@ -25,10 +25,10 @@ pipeline {
             echo 'Build Success'
         }
         failure {
+            echo 'Build fehlgeschlagen'
             // mail to: 'deniz-can96@hotmail.com.com',
             //      subject: "Build fehlgeschlagen: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
             //      body: "Der Build ist fehlgeschlagen. Bitte prüfen."
         }
     }
 }
-
