@@ -1,10 +1,5 @@
 pipeline {
-    agent {
-        docker {
-            image 'python:3.9'
-            args '-u root:root'
-        }
-    }
+    agent any
 
     stages {
         stage('Test') {
@@ -13,28 +8,17 @@ pipeline {
                 sh 'pytest'
             }
         }
-        stage('Build') {
-            steps {
-                sh 'zip -r app.zip .'
-            }
-        }
-        stage('Artefakt') {
-            steps {
-                archiveArtifacts artifacts: 'app.zip', fingerprint: true
-            }
-        }
     }
 
     post {
-        success {
-            echo 'Build Success'
-        }
-        failure {
-            echo 'Build failed, check logs.'
-            // Mail kann problematisch sein, weil SMTP nicht konfiguriert ist
+        always {
+            mail to: 'deniz-can96@hotmail.com',
+                 subject: "Jenkins Build ${currentBuild.fullDisplayName}",
+                 body: "Build Status: ${currentBuild.currentResult}"
         }
     }
 }
+
 
 
 
